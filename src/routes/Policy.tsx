@@ -67,7 +67,7 @@ export default function Policy() {
           <li>Právo odvolať súhlas</li>
         </ul>
         <p>
-          Svoje práva môžete uplatniť kontaktovaním nás na
+          Svoje práva môžete uplatniť kontaktovaním nás na{' '}
           <a href="mailto:podpora@matur.sk">podpora@matur.sk</a>.
         </p>
 
@@ -80,7 +80,7 @@ export default function Policy() {
 
         <h2>9. Správca údajov</h2>
         <p>
-          Správcom osobných údajov je Matur. Kontakt:
+          Správcom osobných údajov je Matur. Kontakt:{' '}
           <a href="mailto:podpora@matur.sk">podpora@matur.sk</a>.
         </p>
 

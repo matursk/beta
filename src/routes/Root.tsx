@@ -180,9 +180,9 @@ export default function Root() {
                   <div className="w-7 h-7 rounded-[40%] bg-blue-600"></div>
                 </div>
               </div>
-              <div className="timeline-start md:text-end mb-10">
+              <div className="timeline-start md:text-end md:pr-6 mb-10">
                 <div className="font-mono opacity-70">1.9.2025</div>
-                <div className="text-lg font-semibold">1. Idea</div>
+                <div className="text-lg font-semibold">Idea</div>
                 <p>Vznikol nápad vytvoriť aplikáciu, ktorá pomôže maturantom.</p>
               </div>
               <hr />
@@ -194,9 +194,9 @@ export default function Root() {
                   <div className="w-7 h-7 rounded-[40%] bg-blue-600"></div>
                 </div>
               </div>
-              <div className="timeline-end mb-10">
+              <div className="timeline-end md:ml-6 mb-10">
                 <div className="font-mono opacity-70">5.9.2025</div>
-                <div className="text-lg font-semibold">2. Prvé kroky</div>
+                <div className="text-lg font-semibold">Prvé kroky</div>
                 <p>Vznikla prvá kostra aplikácie. Zatiaľ len základ.</p>
               </div>
               <hr />
@@ -208,9 +208,9 @@ export default function Root() {
                   <div className="w-7 h-7 rounded-[40%] bg-blue-600"></div>
                 </div>
               </div>
-              <div className="timeline-start md:text-end mb-10">
+              <div className="timeline-start md:text-end md:pr-6 mb-10">
                 <div className="font-mono opacity-70">11.9.2025</div>
-                <div className="text-lg font-semibold">3. Prototyp</div>
+                <div className="text-lg font-semibold">Prototyp</div>
                 <p>Prvý funkčný prototyp. Aplikácia má nastavenia a základné funkcie.</p>
               </div>
               <hr />
@@ -222,9 +222,9 @@ export default function Root() {
                   <div className="w-7 h-7 rounded-[40%] bg-blue-600"></div>
                 </div>
               </div>
-              <div className="timeline-end mb-10">
+              <div className="timeline-end md:ml-6 mb-10">
                 <div className="font-mono opacity-70">20.9.2025</div>
-                <div className="text-lg font-semibold">4. Alfa</div>
+                <div className="text-lg font-semibold">Alfa</div>
                 <p>Prvá alfa spätná väzba od kamarátov. Vznikla admin konzola na lekcie, otázky a ďalšie.</p>
               </div>
               <hr />
@@ -236,9 +236,9 @@ export default function Root() {
                   <div className="w-8 h-8 rotate-45 rounded-lg bg-blue-400"></div>
                 </div>
               </div>
-              <div className="timeline-start md:text-end mb-10">
+              <div className="timeline-start md:text-end md:pr-6 mb-10">
                 <div className="font-mono opacity-70">{todayStr}</div>
-                <div className="text-lg font-semibold">5. Teraz</div>
+                <div className="text-lg font-semibold">Teraz</div>
                 <p>Aplikácia je vo vývoji. Pripravujeme odmeny za chyby (5 € za nájdený bug) a chystáme prvú betu.</p>
               </div>
               <hr />
@@ -250,9 +250,9 @@ export default function Root() {
                   <div className="w-9 h-9 rounded-full overflow-hidden" style={{backgroundImage: "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, #f3f4f6 4px, #f3f4f6 8px)"}}></div>
                 </div>
               </div>
-              <div className="timeline-end mb-10">
+              <div className="timeline-end md:ml-6 mb-10">
                 <div className="font-mono opacity-70">15.10.2025 – 1.11.2025</div>
-                <div className="text-lg font-semibold">6. Prvá beta (uzavretá)</div>
+                <div className="text-lg font-semibold">Prvá beta (uzavretá)</div>
                 <p>Uzavretý beta program pre prihlásených používateľov. Zbierame a vyhodnocujeme spätnú väzbu.</p>
               </div>
               <hr />
@@ -264,9 +264,9 @@ export default function Root() {
                   <div className="w-9 h-9 rounded-full overflow-hidden" style={{backgroundImage: "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, #f3f4f6 4px, #f3f4f6 8px)"}}></div>
                 </div>
               </div>
-              <div className="timeline-start md:text-end mb-10">
+              <div className="timeline-start md:text-end md:pr-6 mb-10">
                 <div className="font-mono opacity-70">December 2025 – Q1 2026</div>
-                <div className="text-lg font-semibold">8. Verejná beta</div>
+                <div className="text-lg font-semibold">Verejná beta</div>
                 <p>Verejné sprístupnenie bety, plný prístup, popritom pracujeme na finálnej verzii.</p>
               </div>
               <hr />
@@ -278,9 +278,9 @@ export default function Root() {
                   <div className="w-9 h-9 rounded-full overflow-hidden" style={{backgroundImage: "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, #f3f4f6 4px, #f3f4f6 8px)"}}></div>
                 </div>
               </div>
-              <div className="timeline-end mb-10">
+              <div className="timeline-end md:ml-6 mb-10">
                 <div className="font-mono opacity-70">Q2 – Q3 2026</div>
-                <div className="text-lg font-semibold">9. Plné vydanie</div>
+                <div className="text-lg font-semibold">Plné vydanie</div>
                 <p>Oficiálne vydanie aplikácie.</p>
               </div>
               <hr />
@@ -292,9 +292,9 @@ export default function Root() {
                   <div className="w-9 h-9 rounded-full overflow-hidden" style={{backgroundImage: "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, #f3f4f6 4px, #f3f4f6 8px)"}}></div>
                 </div>
               </div>
-              <div className="timeline-start md:text-end">
+              <div className="timeline-start md:text-end md:pr-6">
                 <div className="font-mono opacity-70">Budúcnosť</div>
-                <div className="text-lg font-semibold">10. Ďalšie predmety</div>
+                <div className="text-lg font-semibold">Ďalšie predmety</div>
                 <p>Aplikácie pre viac maturitných predmetov, aby sme pokryli všetky aspekty prípravy.</p>
               </div>
             </li>
