@@ -1,0 +1,31 @@
+{
+  "name": "beta-web",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+  "preview": "vite preview --port 5173"
+  },
+  "keywords": [],
+  "private": true,
+  "dependencies": {
+    "firebase": "^12.3.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "daisyui": "^5.1.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}
