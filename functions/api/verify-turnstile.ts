@@ -1,5 +1,6 @@
 export interface Env {
   TURNSTILE_SECRET_KEY: string;
+  MAILCHANNELS_API_KEY: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -12,7 +13,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return new Response(JSON.stringify({ success: false, error: "missing token" }), { status: 400 });
     }
 
-    const secret = context.env.TURNSTILE_SECRET_KEY || "0x4AAAAAAB3eUsa9cKAgrr8W"; // fallback demo
+    const secret = context.env.TURNSTILE_SECRET_KEY;
+    if (!secret) {
+      return new Response(JSON.stringify({ success: false, error: "Missing TURNSTILE_SECRET_KEY env" }), { status: 500 });
+    }
     const form = new FormData();
     form.append("secret", secret);
     form.append("response", token);
@@ -28,24 +32,34 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return new Response(JSON.stringify({ success: false, error: "turnstile" }), { status: 403 });
     }
 
-    // Send emails via MailChannels (available on Cloudflare)
+    // Send emails via MailChannels API (authenticated with API key)
     if (email) {
       const from = "Matur Beta <no-reply@matur.sk>";
       const admin = "michael@matur.sk";
+      const mailApiKey = context.env.MAILCHANNELS_API_KEY;
+      if (!mailApiKey) {
+        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 500 });
+      }
       const send = async (to: string, subject: string, text: string, html: string) => {
-        await fetch("https://api.mailchannels.net/tx/v1/send", {
+        const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers: {
+            "content-type": "application/json",
+            "X-Api-Token": mailApiKey,
+          },
           body: JSON.stringify({
             personalizations: [{ to: [{ email: to }] }],
             from: { email: "no-reply@matur.sk", name: "Matur Beta" },
             subject,
+            headers: [{ name: "Reply-To", value: "podpora@matur.sk" }],
             content: [
               { type: "text/plain", value: text },
               { type: "text/html", value: html },
             ],
           }),
         });
+        const bodyText = await res.text().catch(() => "");
+        return { ok: res.ok, status: res.status, bodyText };
       };
 
       const userSubject = "Ďakujeme za prihlásenie do Matur Beta";
@@ -56,10 +70,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const adminText = `Meno: ${name || "-"}\nEmail: ${email}`;
       const adminHtml = `<p>Meno: ${name || "-"}<br/>Email: ${email}</p>`;
 
-      await Promise.all([
+      const [userRes, adminRes] = await Promise.all([
         send(email, userSubject, userText, userHtml),
         send(admin, adminSubject, adminText, adminHtml),
       ]);
+      if (!userRes.ok || !adminRes.ok) {
+        console.error("MailChannels error", { userRes, adminRes });
+        return new Response(
+          JSON.stringify({ success: false, error: "mail_send_failed", details: { userRes, adminRes } }),
+          { status: 502 }
+        );
+      }
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
