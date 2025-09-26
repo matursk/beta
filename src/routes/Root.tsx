@@ -40,11 +40,13 @@ export default function Root() {
               Prihlás sa do Android beta programu – pomôžeme ti pripraviť sa na maturity
               jednoducho a rýchlo.
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
               <a href="/beta" className="btn btn-primary">Požiadať o prístup</a>
-              <QRForAndroid url={"https://beta.matur.sk"} />
+              <div className="hidden sm:block">
+                <QRForAndroid url={"https://beta.matur.sk"} />
+              </div>
             </div>
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-6 flex items-center gap-4 flex-wrap">
               <a
                 className="text-current hover:opacity-80"
                 href="https://www.instagram.com/pr.matur.sk"
@@ -86,7 +88,7 @@ export default function Root() {
             </div>
           </div>
           <div className="flex justify-center">
-            <img src="/logo.png" alt="Matur logo" className="max-h-64" />
+            <img src="/logo.png" alt="Matur logo" className="max-h-64 max-w-full h-auto" />
           </div>
         </section>
 
@@ -129,7 +131,7 @@ export default function Root() {
                 <h2 className="card-title">Plán a kapacita</h2>
                 <div className="badge badge-primary">Kapacita: 10 miest</div>
               </div>
-              <div className="grid grid-cols-4 gap-3 mt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
                 <div className="text-center p-3 rounded-box bg-base-200">
                   <div className="text-3xl font-bold tabular-nums">{remaining.days}</div>
                   <div className="opacity-70 text-sm">dni</div>

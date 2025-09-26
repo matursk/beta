@@ -10,8 +10,8 @@ export default function QRForAndroid({ url }: { url: string }) {
   }, [url]);
 
   return (
-    <div className="flex items-center gap-3">
-      <canvas ref={canvasRef} className="rounded bg-white p-1" />
+    <div className="flex items-center gap-3 flex-wrap">
+      <canvas ref={canvasRef} className="rounded bg-white p-1 w-40 max-w-full h-auto" />
       <div className="text-sm opacity-80">Naskenuj QR kód v Androide</div>
     </div>
   );

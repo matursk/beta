@@ -7,3 +7,14 @@ html, body, #root {
 }
 
 
+/* Mobile-friendly base adjustments */
+body {
+  overflow-x: hidden;
+}
+
+img, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+
