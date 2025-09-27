@@ -4,6 +4,5 @@ compatibility_date = "2025-09-26"
 # For Pages with project root at ./beta, the output dir is ./beta/dist
 pages_build_output_dir = "dist"
 
-pages_functions_dir = "functions"
 
 
