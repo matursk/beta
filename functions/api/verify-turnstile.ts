@@ -10,12 +10,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const email = body?.email as string | undefined;
     const name = body?.name as string | undefined;
     if (!token) {
-      return new Response(JSON.stringify({ success: false, error: "missing token" }), { status: 400 });
+      return new Response(JSON.stringify({ success: false, error: "missing token" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
     }
 
     const secret = context.env.TURNSTILE_SECRET_KEY;
     if (!secret) {
-      return new Response(JSON.stringify({ success: false, error: "Missing TURNSTILE_SECRET_KEY env" }), { status: 500 });
+      return new Response(JSON.stringify({ success: false, error: "Missing TURNSTILE_SECRET_KEY env" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
     }
     const form = new FormData();
     form.append("secret", secret);
@@ -29,7 +29,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const verifyData = await verifyRes.json<any>();
     const ok = verifyData?.success === true;
     if (!ok) {
-      return new Response(JSON.stringify({ success: false, error: "turnstile" }), { status: 403 });
+      return new Response(JSON.stringify({ success: false, error: "turnstile" }), { status: 403, headers: { "content-type": "application/json; charset=utf-8" } });
     }
 
     // Send emails via MailChannels API (authenticated with API key)
@@ -38,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const admin = "michael@matur.sk";
       const mailApiKey = context.env.MAILCHANNELS_API_KEY;
       if (!mailApiKey) {
-        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 500 });
+        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
       }
       const send = async (to: string, subject: string, text: string, html: string) => {
         const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
@@ -78,14 +78,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         console.error("MailChannels error", { userRes, adminRes });
         return new Response(
           JSON.stringify({ success: false, error: "mail_send_failed", details: { userRes, adminRes } }),
-          { status: 502 }
+          { status: 502, headers: { "content-type": "application/json; charset=utf-8" } }
         );
       }
     }
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "content-type": "application/json; charset=utf-8" } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ success: false, error: e?.message || "error" }), { status: 500 });
+    return new Response(JSON.stringify({ success: false, error: e?.message || "error" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
   }
 };
 

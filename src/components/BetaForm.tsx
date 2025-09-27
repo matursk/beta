@@ -62,9 +62,17 @@ export default function BetaForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, email: state.email, name: state.fullName }),
       });
-      const verifyJson = await verifyRes.json();
-      if (!verifyRes.ok || !verifyJson.success) {
-        throw new Error("Nepodarilo sa overiť ochranu proti spamu.");
+      const contentType = verifyRes.headers.get("content-type") || "";
+      let verifyJson: any = null;
+      if (contentType.includes("application/json")) {
+        verifyJson = await verifyRes.json().catch(() => null);
+      } else {
+        const text = await verifyRes.text().catch(() => "");
+        throw new Error(text || "Server vrátil neplatnú odpoveď.");
+      }
+      if (!verifyRes.ok || !verifyJson?.success) {
+        const serverMessage = verifyJson?.error || verifyJson?.message;
+        throw new Error(serverMessage || "Nepodarilo sa overiť ochranu proti spamu.");
       }
 
       await addDoc(collection(db, "beta_signups"), payload);
