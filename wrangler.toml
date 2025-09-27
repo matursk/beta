@@ -1,11 +1,14 @@
 name = "matur-beta"
 compatibility_date = "2025-09-26"
 
+# For Pages with project root at ./beta, the output dir is ./beta/dist
 pages_build_output_dir = "dist"
 
-functions = "functions"
+name = "matur-beta"
+compatibility_date = "2025-09-26"
 
-fail_open = false
+# For Cloudflare Pages deployments, point to the built output
+# of the app that lives under the `beta/` directory.
+pages_build_output_dir = "beta/dist"
 
-[build]
-command = "npm run build --prefix beta"
+
