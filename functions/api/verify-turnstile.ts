@@ -15,7 +15,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const secret = context.env.TURNSTILE_SECRET_KEY;
     if (!secret) {
-      return new Response(JSON.stringify({ success: false, error: "Missing TURNSTILE_SECRET_KEY env" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+      return new Response(JSON.stringify({ success: false, error: "Missing TURNSTILE_SECRET_KEY env" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
     }
     const form = new FormData();
     form.append("secret", secret);
@@ -38,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const admin = "michael@matur.sk";
       const mailApiKey = context.env.MAILCHANNELS_API_KEY;
       if (!mailApiKey) {
-        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
       }
       const send = async (to: string, subject: string, text: string, html: string) => {
         const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
@@ -76,16 +76,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ]);
       if (!userRes.ok || !adminRes.ok) {
         console.error("MailChannels error", { userRes, adminRes });
+        // Return 200 so Cloudflare doesn't replace our response with a generic 502 page
         return new Response(
           JSON.stringify({ success: false, error: "mail_send_failed", details: { userRes, adminRes } }),
-          { status: 502, headers: { "content-type": "application/json; charset=utf-8" } }
+          { status: 200, headers: { "content-type": "application/json; charset=utf-8" } }
         );
       }
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "content-type": "application/json; charset=utf-8" } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ success: false, error: e?.message || "error" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+    return new Response(JSON.stringify({ success: false, error: e?.message || "error" }), { status: 200, headers: { "content-type": "application/json; charset=utf-8" } });
   }
 };
 
