@@ -41,17 +41,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
       }
       const send = async (to: string, subject: string, text: string, html: string) => {
+        const headers: Record<string, string> = { "content-type": "application/json" };
+        // Support both auth header styles
+        if (mailApiKey) {
+          headers["X-Api-Token"] = mailApiKey;
+          headers["Authorization"] = `Bearer ${mailApiKey}`;
+        }
         const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
           method: "POST",
-          headers: {
-            "content-type": "application/json",
-            "X-Api-Token": mailApiKey,
-          },
+          headers,
           body: JSON.stringify({
             personalizations: [{ to: [{ email: to }] }],
             from: { email: "no-reply@matur.sk", name: "Matur Beta" },
             subject,
-            headers: [{ name: "Reply-To", value: "podpora@matur.sk" }],
+            headers: { "Reply-To": "podpora@matur.sk" },
             content: [
               { type: "text/plain", value: text },
               { type: "text/html", value: html },
