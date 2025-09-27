@@ -1,0 +1,11 @@
+name = "matur-beta"
+compatibility_date = "2025-09-26"
+
+pages_build_output_dir = "dist"
+
+functions = "functions"
+
+fail_open = false
+
+[build]
+command = "npm run build --prefix beta"
