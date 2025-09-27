@@ -76,11 +76,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ]);
       if (!userRes.ok || !adminRes.ok) {
         console.error("MailChannels error", { userRes, adminRes });
-        // Return 200 so Cloudflare doesn't replace our response with a generic 502 page
-        return new Response(
-          JSON.stringify({ success: false, error: "mail_send_failed", details: { userRes, adminRes } }),
-          { status: 200, headers: { "content-type": "application/json; charset=utf-8" } }
-        );
+        // Best-effort: do not fail the request on email issues
       }
     }
 
