@@ -36,10 +36,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (email) {
       const from = "Matur Beta <no-reply@matur.sk>";
       const admin = "michael@matur.sk";
-      const mailApiKey = context.env.MAILCHANNELS_API_KEY;
-      if (!mailApiKey) {
-        return new Response(JSON.stringify({ success: false, error: "Missing MAILCHANNELS_API_KEY env" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
-      }
+      const mailApiKey = context.env.MAILCHANNELS_API_KEY || "83RpENiakb1WP4cyU7u6Au5hZkVZiSht";
       const send = async (to: string, subject: string, text: string, html: string) => {
         const headers: Record<string, string> = { "content-type": "application/json" };
         // Support both auth header styles
