@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Provided Firebase config
 export const firebaseConfig = {
@@ -14,5 +15,9 @@ export const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+// Ensure client is authenticated for Firestore security rules (Anonymous auth)
+const auth = getAuth(app);
+signInAnonymously(auth).catch(() => {});
 
 
