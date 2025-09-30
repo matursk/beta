@@ -10,7 +10,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const body = await context.request.json();
     const token = body?.token as string | undefined;
     const email = body?.email as string | undefined;
-    const name = body?.name as string | undefined;
+    const firstNameBody = body?.firstName as string | undefined;
+    const lastNameBody = body?.lastName as string | undefined;
     if (!token) {
       return new Response(JSON.stringify({ success: false, error: "missing token" }), { status: 400, headers: { "content-type": "application/json; charset=utf-8" } });
     }
@@ -88,30 +89,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return { ok: res.ok, status: res.status, bodyText };
       };
 
-      const ensureListAndUpsertContact = async (emailAddr: string, fullName?: string) => {
+      const ensureListAndUpsertContact = async (emailAddr: string, firstName?: string, lastName?: string) => {
         const apiKey = context.env.BREVO_API_KEY;
         if (!apiKey) return;
         const listName = (context.env.BREVO_LIST_NAME || "BETA").trim();
         let listId: number | null = null;
         try {
-          // Split full name into first and last name
-          const split = (nameStr?: string): { firstName?: string; lastName?: string; displayName?: string } => {
-            const result: { firstName?: string; lastName?: string; displayName?: string } = {};
-            const raw = (nameStr || "").trim().replace(/\s+/g, " ");
-            if (!raw) return result;
-            const parts = raw.split(" ");
-            if (parts.length === 1) {
-              result.firstName = parts[0];
-              result.displayName = raw;
-            } else {
-              result.firstName = parts[0];
-              result.lastName = parts.slice(1).join(" ");
-              result.displayName = raw;
-            }
-            return result;
-          };
-
-          const { firstName, lastName, displayName } = split(fullName);
+          const displayName = `${(firstName || "").trim()} ${(lastName || "").trim()}`.trim() || undefined;
 
           // Find existing lists
           const listRes = await fetch("https://api.brevo.com/v3/contacts/lists?limit=50&offset=0", {
@@ -143,7 +127,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
               body: JSON.stringify({
                 email: emailAddr,
                 attributes: (firstName || lastName || displayName)
-                  ? { FIRSTNAME: firstName, LASTNAME: lastName, NAME: displayName }
+                  ? { FIRSTNAME: firstName || undefined, LASTNAME: lastName || undefined, NAME: displayName }
                   : undefined,
                 listIds: [listId],
               }),
@@ -154,17 +138,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         }
       };
 
-      const userSubject = "Ďakujeme za prihlásenie do Matur Beta";
-      const userText = `Ahoj ${name || ""},\n\nĎakujeme za prihlásenie. Ak ťa vyberieme, ozveme sa e‑mailom s odkazom na stiahnutie APK.\n\nTím Matur`;
-      const userHtml = `<p>Ahoj ${name || ""},</p><p>Ďakujeme za prihlásenie. Ak ťa vyberieme, ozveme sa e‑mailom s odkazom na stiahnutie APK.</p><p>Tím Matur</p>`;
-
       const adminSubject = "Nová beta prihláška";
-      const adminText = `Meno: ${name || "-"}\nEmail: ${email}`;
-      const adminHtml = `<p>Meno: ${name || "-"}<br/>Email: ${email}</p>`;
+      const displayAdminName = `${(firstNameBody || "").trim()} ${(lastNameBody || "").trim()}`.trim() || "-";
+      const adminText = `Meno: ${displayAdminName}\nEmail: ${email}`;
+      const adminHtml = `<p>Meno: ${displayAdminName}<br/>Email: ${email}</p>`;
 
       // Upsert contact to Brevo list with FIRSTNAME/LASTNAME and await before sending
       try {
-        await ensureListAndUpsertContact(email, name || undefined);
+        await ensureListAndUpsertContact(email, firstNameBody || undefined, lastNameBody || undefined);
       } catch {
         // Proceed even if upsert fails, but we awaited to best ensure attributes exist
       }
@@ -175,7 +156,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const userSendPromise = Number.isFinite(templateId)
         // Send using template relying solely on contact attributes (no params, no to.name)
         ? sendWithTemplate(email, undefined, templateId, undefined as any)
-        : send(email, userSubject, userText, userHtml, undefined);
+        // No text/html fallback: if template is not configured, skip user send
+        : Promise.resolve({ ok: true, status: 0, bodyText: "Skipped user email: template not configured" });
 
       const [userRes, adminRes] = await Promise.all([
         userSendPromise,

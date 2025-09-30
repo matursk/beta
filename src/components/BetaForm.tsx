@@ -3,7 +3,8 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 type FormState = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   school: string;
   grade: string;
@@ -17,7 +18,8 @@ type FormState = {
 };
 
 const initialState: FormState = {
-  fullName: "",
+  firstName: "",
+  lastName: "",
   email: "",
   school: "",
   grade: "",
@@ -60,7 +62,7 @@ export default function BetaForm() {
       const verifyRes = await fetch("/api/verify-turnstile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, email: state.email, name: state.fullName }),
+        body: JSON.stringify({ token, email: state.email, firstName: state.firstName, lastName: state.lastName }),
       });
       const contentType = verifyRes.headers.get("content-type") || "";
       let verifyJson: any = null;
@@ -93,15 +95,28 @@ export default function BetaForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Meno a priezvisko <span className="text-error">*</span></span>
+            <span className="label-text">Meno <span className="text-error">*</span></span>
           </label>
           <input
             type="text"
             className="input input-bordered w-full"
-            placeholder="napr. Ján Novák"
+            placeholder="napr. Ján"
             required
-            value={state.fullName}
-            onChange={(e) => setState({ ...state, fullName: e.target.value })}
+            value={state.firstName}
+            onChange={(e) => setState({ ...state, firstName: e.target.value })}
+          />
+        </div>
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Priezvisko <span className="text-error">*</span></span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="napr. Novák"
+            required
+            value={state.lastName}
+            onChange={(e) => setState({ ...state, lastName: e.target.value })}
           />
         </div>
         <div className="form-control">
