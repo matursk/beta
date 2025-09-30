@@ -150,14 +150,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         // Proceed even if upsert fails, but we awaited to best ensure attributes exist
       }
 
-      // If user template is configured, prefer sending via template
+      // Enforce template presence; fail fast with clear error if missing
+      const apiKeyPresent = !!context.env.BREVO_API_KEY;
       const templateIdRaw = context.env.BREVO_USER_TEMPLATE_ID;
       const templateId = templateIdRaw ? Number(templateIdRaw) : NaN;
-      const userSendPromise = Number.isFinite(templateId)
-        // Send using template relying solely on contact attributes (no params, no to.name)
-        ? sendWithTemplate(email, undefined, templateId, undefined as any)
-        // No text/html fallback: if template is not configured, skip user send
-        : Promise.resolve({ ok: true, status: 0, bodyText: "Skipped user email: template not configured" });
+      if (!apiKeyPresent) {
+        return new Response(JSON.stringify({ success: false, error: "Missing BREVO_API_KEY" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+      }
+      if (!Number.isFinite(templateId)) {
+        return new Response(JSON.stringify({ success: false, error: "Missing or invalid BREVO_USER_TEMPLATE_ID" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+      }
+      const userSendPromise = sendWithTemplate(email, undefined, templateId, undefined as any);
 
       const [userRes, adminRes] = await Promise.all([
         userSendPromise,
@@ -165,7 +168,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ]);
       if (!userRes.ok || !adminRes.ok) {
         console.error("Brevo error", { userRes, adminRes });
-        // Best-effort: do not fail the request on email issues
+        return new Response(
+          JSON.stringify({ success: false, error: "Brevo send failed", user: userRes, admin: adminRes }),
+          { status: 500, headers: { "content-type": "application/json; charset=utf-8" } }
+        );
       }
     }
 
