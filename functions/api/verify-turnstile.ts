@@ -1,9 +1,11 @@
 export interface Env {
   TURNSTILE_SECRET_KEY: string;
   BREVO_API_KEY: string;
-  BREVO_USER_TEMPLATE_ID?: string;
   BREVO_LIST_NAME?: string;
 }
+
+// Hardcoded Brevo transactional template ID for BETA signup
+const USER_TEMPLATE_ID = 2;
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
@@ -152,13 +154,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
       // Enforce template presence; fail fast with clear error if missing
       const apiKeyPresent = !!context.env.BREVO_API_KEY;
-      const templateIdRaw = context.env.BREVO_USER_TEMPLATE_ID;
-      const templateId = templateIdRaw ? Number(templateIdRaw) : NaN;
+      const templateId = Number(USER_TEMPLATE_ID);
       if (!apiKeyPresent) {
         return new Response(JSON.stringify({ success: false, error: "Missing BREVO_API_KEY" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
       }
-      if (!Number.isFinite(templateId)) {
-        return new Response(JSON.stringify({ success: false, error: "Missing or invalid BREVO_USER_TEMPLATE_ID" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
+      if (!Number.isFinite(templateId) || templateId <= 0) {
+        return new Response(JSON.stringify({ success: false, error: "Missing or invalid hardcoded template ID" }), { status: 500, headers: { "content-type": "application/json; charset=utf-8" } });
       }
       const userSendPromise = sendWithTemplate(email, undefined, templateId, undefined as any);
 
