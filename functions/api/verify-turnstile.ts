@@ -1,6 +1,6 @@
 export interface Env {
   TURNSTILE_SECRET_KEY: string;
-  MAILCHANNELS_API_KEY: string;
+  BREVO_API_KEY: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -32,30 +32,29 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       return new Response(JSON.stringify({ success: false, error: "turnstile" }), { status: 403, headers: { "content-type": "application/json; charset=utf-8" } });
     }
 
-    // Send emails via MailChannels API (authenticated with API key)
+    // Send emails via Brevo Transactional API
     if (email) {
-      const from = "Matur Beta <no-reply@matur.sk>";
       const admin = "michael@matur.sk";
-      const mailApiKey = context.env.MAILCHANNELS_API_KEY || "83RpENiakb1WP4cyU7u6Au5hZkVZiSht";
-      const send = async (to: string, subject: string, text: string, html: string) => {
-        const headers: Record<string, string> = { "content-type": "application/json" };
-        // Support both auth header styles
-        if (mailApiKey) {
-          headers["X-Api-Token"] = mailApiKey;
-          headers["Authorization"] = `Bearer ${mailApiKey}`;
+      const send = async (to: string, subject: string, text: string, html: string, toName?: string) => {
+        const apiKey = context.env.BREVO_API_KEY;
+        if (!apiKey) {
+          return { ok: false, status: 0, bodyText: "Missing BREVO_API_KEY" };
         }
-        const res = await fetch("https://api.mailchannels.net/tx/v1/send", {
+        const res = await fetch("https://api.brevo.com/v3/smtp/email", {
           method: "POST",
-          headers,
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json",
+            "api-key": apiKey,
+          },
           body: JSON.stringify({
-            personalizations: [{ to: [{ email: to }] }],
-            from: { email: "no-reply@matur.sk", name: "Matur Beta" },
+            sender: { email: "no-reply@matur.sk", name: "Matur Beta" },
+            to: [{ email: to, name: toName || undefined }],
             subject,
-            headers: { "Reply-To": "podpora@matur.sk" },
-            content: [
-              { type: "text/plain", value: text },
-              { type: "text/html", value: html },
-            ],
+            textContent: text,
+            htmlContent: html,
+            replyTo: { email: "podpora@matur.sk", name: "Podpora" },
+            tags: ["beta"],
           }),
         });
         const bodyText = await res.text().catch(() => "");
@@ -71,11 +70,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const adminHtml = `<p>Meno: ${name || "-"}<br/>Email: ${email}</p>`;
 
       const [userRes, adminRes] = await Promise.all([
-        send(email, userSubject, userText, userHtml),
-        send(admin, adminSubject, adminText, adminHtml),
+        send(email, userSubject, userText, userHtml, name || undefined),
+        send(admin, adminSubject, adminText, adminHtml, "Admin"),
       ]);
       if (!userRes.ok || !adminRes.ok) {
-        console.error("MailChannels error", { userRes, adminRes });
+        console.error("Brevo error", { userRes, adminRes });
         // Best-effort: do not fail the request on email issues
       }
     }
