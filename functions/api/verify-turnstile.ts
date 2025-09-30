@@ -94,6 +94,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const listName = (context.env.BREVO_LIST_NAME || "BETA").trim();
         let listId: number | null = null;
         try {
+          // Split full name into first and last name
+          const split = (nameStr?: string): { firstName?: string; lastName?: string; displayName?: string } => {
+            const result: { firstName?: string; lastName?: string; displayName?: string } = {};
+            const raw = (nameStr || "").trim().replace(/\s+/g, " ");
+            if (!raw) return result;
+            const parts = raw.split(" ");
+            if (parts.length === 1) {
+              result.firstName = parts[0];
+              result.displayName = raw;
+            } else {
+              result.firstName = parts[0];
+              result.lastName = parts.slice(1).join(" ");
+              result.displayName = raw;
+            }
+            return result;
+          };
+
+          const { firstName, lastName, displayName } = split(fullName);
+
           // Find existing lists
           const listRes = await fetch("https://api.brevo.com/v3/contacts/lists?limit=50&offset=0", {
             headers: { "accept": "application/json", "api-key": apiKey },
@@ -123,7 +142,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
               headers: { "content-type": "application/json", "accept": "application/json", "api-key": apiKey },
               body: JSON.stringify({
                 email: emailAddr,
-                attributes: fullName ? { NAME: fullName } : undefined,
+                attributes: (firstName || lastName || displayName)
+                  ? { FIRSTNAME: firstName, LASTNAME: lastName, NAME: displayName }
+                  : undefined,
                 listIds: [listId],
               }),
             });
@@ -141,15 +162,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const adminText = `Meno: ${name || "-"}\nEmail: ${email}`;
       const adminHtml = `<p>Meno: ${name || "-"}<br/>Email: ${email}</p>`;
 
-      // Upsert contact to Brevo list (best-effort)
-      ensureListAndUpsertContact(email, name || undefined).catch(() => {});
+      // Upsert contact to Brevo list with FIRSTNAME/LASTNAME and await before sending
+      try {
+        await ensureListAndUpsertContact(email, name || undefined);
+      } catch {
+        // Proceed even if upsert fails, but we awaited to best ensure attributes exist
+      }
 
       // If user template is configured, prefer sending via template
       const templateIdRaw = context.env.BREVO_USER_TEMPLATE_ID;
       const templateId = templateIdRaw ? Number(templateIdRaw) : NaN;
       const userSendPromise = Number.isFinite(templateId)
-        ? sendWithTemplate(email, name || undefined, templateId, { name: name || "", email })
-        : send(email, userSubject, userText, userHtml, name || undefined);
+        // Send using template relying solely on contact attributes (no params, no to.name)
+        ? sendWithTemplate(email, undefined, templateId, undefined as any)
+        : send(email, userSubject, userText, userHtml, undefined);
 
       const [userRes, adminRes] = await Promise.all([
         userSendPromise,
