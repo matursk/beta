@@ -13,6 +13,11 @@ export default function Root() {
   })();
 
   const betaStart = new Date(2025, 9, 15, 0, 0, 0); // 15.10.2025
+  // Threshold: 15.10.2025 08:00 CEST (UTC+2). Compute as UTC for comparison.
+  // Create Date as if local is CEST, then convert to UTC timestamp offset of +2h.
+  const ROADMAP_THRESHOLD_UTC_MS = Date.UTC(2025, 9, 15, 6, 0, 0); // 06:00 UTC == 08:00 CEST
+  const [serverNowMs, setServerNowMs] = React.useState<number | null>(null);
+  const isAfterThreshold = serverNowMs !== null && serverNowMs >= ROADMAP_THRESHOLD_UTC_MS;
   function getRemaining() {
     const now = new Date().getTime();
     const diff = Math.max(0, betaStart.getTime() - now);
@@ -28,6 +33,25 @@ export default function Root() {
     return () => clearInterval(id);
   }, []);
 
+  // Fetch server time once to avoid client clock skew
+  React.useEffect(() => {
+    let aborted = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/server-time", { headers: { "accept": "application/json" } });
+        if (!res.ok) throw new Error("server time failed");
+        const data = await res.json().catch(() => null) as any;
+        const iso: string | undefined = data?.now;
+        const ms = iso ? Date.parse(iso) : NaN;
+        if (!aborted && Number.isFinite(ms)) setServerNowMs(ms);
+      } catch {
+        // Fallback to client time if server time is unavailable
+        if (!aborted) setServerNowMs(Date.now());
+      }
+    })();
+    return () => { aborted = true; };
+  }, []);
+
   return (
     <div className="min-h-screen bg-base-100">
       <Navbar />
@@ -41,7 +65,7 @@ export default function Root() {
               jednoducho a rýchlo.
             </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
-              <a href="/beta" className="btn btn-primary">Požiadať o prístup</a>
+              <a href="/beta" className="btn btn-disabled pointer-events-none">Prihlasovanie uzavreté</a>
               <div className="hidden sm:block">
                 <QRForAndroid url={"https://beta.matur.sk"} />
               </div>
@@ -237,9 +261,13 @@ export default function Root() {
                 </div>
               </div>
               <div className="timeline-start md:text-end md:pr-6 mb-10">
-                <div className="font-mono opacity-70">{todayStr}</div>
+                <div className="font-mono opacity-70">{isAfterThreshold ? "15.10.2025 08:00" : "27.9.2025"}</div>
                 <div className="text-lg font-semibold">Teraz</div>
-                <p>Aplikácia je vo vývoji. Pripravujeme odmeny za chyby (5 € za nájdený bug) a chystáme prvú betu.</p>
+                <p>
+                  {isAfterThreshold
+                    ? "Uzavreli sme prihlasovanie do uzavretej bety a pripravujeme jej distribúciu."
+                    : "Pripravujeme prvé kolo uzavretej beta verzie a pokračujeme vo vývoji."}
+                </p>
               </div>
               <hr />
             </li>

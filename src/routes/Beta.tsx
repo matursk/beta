@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import PlatformNotice from "../components/PlatformNotice";
-import BetaForm from "../components/BetaForm";
 
 export default function Beta() {
   return (
@@ -10,9 +9,11 @@ export default function Beta() {
       <main className="container mx-auto px-4 py-10 space-y-10">
         <section className="max-w-2xl">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Prihláška do beta programu</h1>
-          <p className="opacity-80">
-            Vyplň krátky formulár. Ak ťa vyberieme, pošleme ti e‑mail s prístupom
-            do Android bety.
+          <div className="alert alert-info">
+            Uzavreli sme prihlasovanie do uzavretej bety a pripravujeme jej distribúciu.
+          </div>
+          <p className="opacity-80 mt-3">
+            Ak si sa prihlásil/a, čoskoro sa ozveme e‑mailom s ďalšími krokmi.
           </p>
         </section>
 
@@ -20,9 +21,13 @@ export default function Beta() {
           <PlatformNotice />
           <div className="card bg-base-100 shadow mt-6">
             <div className="card-body">
-              <BetaForm />
+              <h2 className="card-title">Ďalšie kroky</h2>
+              <p>
+                Distribúciu uzavretej bety pripravujeme. Pošleme ti e‑mail s odkazom na stiahnutie APK a
+                inštrukciami hneď, ako bude k dispozícii.
+              </p>
               <p className="text-xs opacity-70 mt-2">
-                Odoslaním súhlasíš s <a className="link" href="/beta-policy">Beta policy</a>.
+                Viac o spracúvaní údajov nájdeš v <a className="link" href="/beta-policy">Beta policy</a>.
               </p>
             </div>
           </div>
