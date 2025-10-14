@@ -7,6 +7,9 @@ import ThankYou from "./routes/ThankYou";
 import Policy from "./routes/Policy";
 import Beta from "./routes/Beta";
 import CbetaTos from "./routes/CbetaTos";
+import CbetaDashboard from "./cbeta/Dashboard";
+import CbetaLogin from "./cbeta/Login";
+import CbetaSignup from "./cbeta/Signup";
 
 const router = createBrowserRouter([
   { path: "/", element: <Root /> },
@@ -14,6 +17,9 @@ const router = createBrowserRouter([
   { path: "/dakujeme", element: <ThankYou /> },
   { path: "/beta-policy", element: <Policy /> },
   { path: "/cbeta-tos", element: <CbetaTos /> },
+  { path: "/cbeta", element: <CbetaDashboard /> },
+  { path: "/cbeta/login", element: <CbetaLogin /> },
+  { path: "/cbeta/signup", element: <CbetaSignup /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
