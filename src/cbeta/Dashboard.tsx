@@ -3,8 +3,17 @@ import CbetaLayout from "./Layout";
 import CbetaGuard from "./Guard";
 import { signOut } from "firebase/auth";
 import { cbetaAuth } from "./firebaseApp";
+import QRForAndroid from "../components/QRForAndroid";
 
 export default function CbetaDashboard() {
+  const isProbablyMobile = (() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || navigator.vendor || "";
+    return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua);
+  })();
+
+  const enrollUrl = "https://appdistribution.firebase.google.com/testerapps/1:624068510753:android:771f91df44029766c08f60/releases/69882q6o207uo?utm_source=firebase-console";
+
   return (
     <CbetaGuard>
       <CbetaLayout>
@@ -16,8 +25,19 @@ export default function CbetaDashboard() {
           <div className="card bg-base-100 shadow">
             <div className="card-body">
               <h2 className="card-title">Stiahnutie APK</h2>
-              <p>Tu bude odkaz na najnovší build aplikácie pre uzavretú betu.</p>
-              <a className="btn btn-primary" href="#" aria-disabled>Čoskoro dostupné</a>
+              {isProbablyMobile ? (
+                <>
+                  <p>Registrácia a stiahnutie cez Firebase App Distribution.</p>
+                  <a className="btn btn-primary" href={enrollUrl} target="_blank" rel="noreferrer">
+                    Otvoriť download/enroll
+                  </a>
+                </>
+              ) : (
+                <>
+                  <p>Otvor túto stránku v Androide alebo naskenuj QR kód na mobile:</p>
+                  <QRForAndroid url={enrollUrl} />
+                </>
+              )}
             </div>
           </div>
           <div className="card bg-base-100 shadow">
