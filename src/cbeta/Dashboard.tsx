@@ -12,7 +12,7 @@ export default function CbetaDashboard() {
     return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua);
   })();
 
-  const enrollUrl = "https://appdistribution.firebase.google.com/testerapps/1:624068510753:android:771f91df44029766c08f60/releases/69882q6o207uo?utm_source=firebase-console";
+  const enrollUrl = "https://appdistribution.firebase.dev/i/416cbe715cbce17f";
 
   return (
     <CbetaGuard>
