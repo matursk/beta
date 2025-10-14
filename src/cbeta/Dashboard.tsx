@@ -29,8 +29,8 @@ export default function CbetaDashboard() {
           </div>
           <div className="card bg-base-100 shadow">
             <div className="card-body">
-              <h2 className="card-title">Nahlásiť chybu</h2>
-              <p>Otvor bug konzolu a pošli nám hlásenie.</p>
+              <h2 className="card-title">Bug konzola</h2>
+              <p>Uplatni si odmenu za chyby nahlásené priamo v appke a skontroluj stav nahlásení.</p>
               <a className="btn" href="https://bugs.matur.sk" target="_blank" rel="noreferrer">Prejsť na bugs.matur.sk</a>
             </div>
           </div>
