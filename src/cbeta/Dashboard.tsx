@@ -2,6 +2,11 @@ import React from "react";
 import CbetaLayout from "./Layout";
 import CbetaGuard from "./Guard";
 import { getAuth, signOut } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../lib/firebase";
+
+// Ensure we reference the same default app used by login/signup
+initializeApp(firebaseConfig);
 
 export default function CbetaDashboard() {
   return (

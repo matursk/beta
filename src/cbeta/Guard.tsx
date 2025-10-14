@@ -1,36 +1,13 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { isAllowedEmail } from "./allowlist";
 import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "../lib/firebase";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxvhTuQhfKeIgybiRQoca7btPdSO5oFag",
-  authDomain: "matur-3f6cc.firebaseapp.com",
-  projectId: "matur-3f6cc",
-  storageBucket: "matur-3f6cc.firebasestorage.app",
-  messagingSenderId: "624068510753",
-  appId: "1:624068510753:web:91c0d1343b1b9687c08f60",
-  measurementId: "G-RFNRJCQDGB",
-};
-
-const app = initializeApp(firebaseConfig, "cbeta");
+// Reuse the default app (no name) so auth state is shared across pages.
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-const ALLOWLIST = new Set([
-  "evkajak1042@gmail.com",
-  "bastek.andrej@gmail.com",
-  "dany.kulich@gmail.com",
-  "lukasryljak123@gmail.com",
-  "pavelvisocoi895@gmail.com",
-  "martinstrasik000@gmail.com",
-  "velkapica339@gmail.com",
-  "diana.senasiova@gmail.com",
-  // Admins
-  "admin@matur.sk",
-  "michaelchobot.dev@gmail.com",
-  "marek@matur.sk",
-  "michael@matur.sk",
-]);
 
 export default function CbetaGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = React.useState(true);
@@ -38,8 +15,7 @@ export default function CbetaGuard({ children }: { children: React.ReactNode }) 
 
   React.useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      const email = (user?.email || "").toLowerCase();
-      setOk(!!user && ALLOWLIST.has(email));
+      setOk(!!user && isAllowedEmail(user?.email || null));
       setChecking(false);
     });
     return () => unsub();

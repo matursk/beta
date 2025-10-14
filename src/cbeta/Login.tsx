@@ -1,19 +1,10 @@
 import React, { useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { firebaseConfig } from "../lib/firebase";
 import CbetaLayout from "./Layout";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxvhTuQhfKeIgybiRQoca7btPdSO5oFag",
-  authDomain: "matur-3f6cc.firebaseapp.com",
-  projectId: "matur-3f6cc",
-  storageBucket: "matur-3f6cc.firebasestorage.app",
-  messagingSenderId: "624068510753",
-  appId: "1:624068510753:web:91c0d1343b1b9687c08f60",
-  measurementId: "G-RFNRJCQDGB",
-};
-
-const app = initializeApp(firebaseConfig, "cbeta-login");
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export default function CbetaLogin() {
