@@ -89,6 +89,10 @@ export default function Policy() {
           Táto Beta policy nadobúda účinnosť dňom zverejnenia a môže byť
           aktualizovaná. Aktuálne znenie je dostupné na tejto stránke.
         </p>
+        <p>
+          Ak ste už boli prijatí do uzavretej beta verzie, prečítajte si aj
+          <a href="/cbeta-tos">Podmienky uzavretej beta verzie (CBETA)</a>.
+        </p>
       </div>
     </div>
   );

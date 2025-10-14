@@ -47,6 +47,12 @@ export default function Navbar() {
             >
               Beta policy
             </Link>
+            <Link
+              to="/cbeta-tos"
+              className={`btn btn-ghost btn-md ${isActive("/cbeta-tos") ? "btn-active" : ""}`}
+            >
+              CBETA podmienky
+            </Link>
             <Link to="/beta" className="btn btn-md btn-primary">
               Chcem do bety
             </Link>
@@ -68,6 +74,13 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
               >
                 Beta policy
+              </Link>
+              <Link
+                to="/cbeta-tos"
+                className={`btn btn-ghost justify-start ${isActive("/cbeta-tos") ? "btn-active" : ""}`}
+                onClick={() => setOpen(false)}
+              >
+                CBETA podmienky
               </Link>
               <Link
                 to="/beta"

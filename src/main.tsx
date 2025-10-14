@@ -6,12 +6,14 @@ import Root from "./routes/Root";
 import ThankYou from "./routes/ThankYou";
 import Policy from "./routes/Policy";
 import Beta from "./routes/Beta";
+import CbetaTos from "./routes/CbetaTos";
 
 const router = createBrowserRouter([
   { path: "/", element: <Root /> },
   { path: "/beta", element: <Beta /> },
   { path: "/dakujeme", element: <ThankYou /> },
   { path: "/beta-policy", element: <Policy /> },
+  { path: "/cbeta-tos", element: <CbetaTos /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
