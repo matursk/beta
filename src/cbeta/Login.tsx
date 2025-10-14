@@ -43,9 +43,7 @@ export default function CbetaLogin() {
             {submitting ? "Prihlasujem…" : "Prihlásiť sa"}
           </button>
         </form>
-        <p className="mt-3 text-sm">
-          Nemáš účet? <a className="link" href="/cbeta/signup">Vytvor si ho</a>
-        </p>
+        {/* Signup is invite-only; no direct link from login */}
       </div>
     </CbetaLayout>
   );
