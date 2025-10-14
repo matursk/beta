@@ -1,13 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { isAllowedEmail } from "./allowlist";
-import { getApps, initializeApp } from "firebase/app";
-import { firebaseConfig } from "../lib/firebase";
-
-// Ensure single shared app instance
-const app = (getApps()[0] || initializeApp(firebaseConfig));
-const auth = getAuth(app);
+import { cbetaAuth } from "./firebaseApp";
 
 export default function CbetaGuard({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = React.useState(true);
@@ -15,7 +10,7 @@ export default function CbetaGuard({ children }: { children: React.ReactNode }) 
   const [hasUser, setHasUser] = React.useState(false);
 
   React.useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(cbetaAuth, (user) => {
       setHasUser(!!user);
       setOk(!!user && isAllowedEmail(user?.email || null));
       setChecking(false);
@@ -40,7 +35,7 @@ export default function CbetaGuard({ children }: { children: React.ReactNode }) 
               <h2 className="card-title">Prístup zamietnutý</h2>
               <p>Tento účet nemá prístup do uzavretej CBETA. Skús sa prihlásiť iným e‑mailom.</p>
               <div className="pt-2">
-                <button className="btn" onClick={() => signOut(auth)}>Odhlásiť sa</button>
+                <button className="btn" onClick={() => signOut(cbetaAuth)}>Odhlásiť sa</button>
               </div>
             </div>
           </div>

@@ -1,12 +1,8 @@
 import React from "react";
 import CbetaLayout from "./Layout";
 import CbetaGuard from "./Guard";
-import { getAuth, signOut } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "../lib/firebase";
-
-// Ensure we reference the same default app used by login/signup
-initializeApp(firebaseConfig);
+import { signOut } from "firebase/auth";
+import { cbetaAuth } from "./firebaseApp";
 
 export default function CbetaDashboard() {
   return (
@@ -14,7 +10,7 @@ export default function CbetaDashboard() {
       <CbetaLayout>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">CBETA prehľad</h1>
-          <button className="btn btn-outline btn-sm" onClick={() => signOut(getAuth())}>Odhlásiť</button>
+          <button className="btn btn-outline btn-sm" onClick={() => signOut(cbetaAuth)}>Odhlásiť</button>
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="card bg-base-100 shadow">

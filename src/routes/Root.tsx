@@ -12,10 +12,10 @@ export default function Root() {
     return `${dd}.${mm}.${yyyy}`;
   })();
 
-  const betaStart = new Date(2025, 9, 15, 0, 0, 0); // 15.10.2025
+  const betaStart = new Date(2025, 9, 15, 8, 0, 0); // 15.10.2025
   // Threshold: 15.10.2025 08:00 CEST (UTC+2). Compute as UTC for comparison.
   // Create Date as if local is CEST, then convert to UTC timestamp offset of +2h.
-  const ROADMAP_THRESHOLD_UTC_MS = Date.UTC(2025, 9, 15, 6, 0, 0); // 06:00 UTC == 08:00 CEST
+  const ROADMAP_THRESHOLD_UTC_MS = Date.UTC(2025, 9, 15, 8, 0, 0); // 06:00 UTC == 08:00 CEST
   const [serverNowMs, setServerNowMs] = React.useState<number | null>(null);
   const isAfterThreshold = serverNowMs !== null && serverNowMs >= ROADMAP_THRESHOLD_UTC_MS;
   function getRemaining() {

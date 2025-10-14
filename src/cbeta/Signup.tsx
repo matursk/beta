@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { firebaseConfig } from "../lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { cbetaAuth } from "./firebaseApp";
 import CbetaLayout from "./Layout";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const auth = cbetaAuth;
 
 export default function CbetaSignup() {
   const [email, setEmail] = useState("");
