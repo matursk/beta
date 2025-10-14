@@ -24,7 +24,7 @@ export default function CbetaDashboard() {
             <div className="card-body">
               <h2 className="card-title">Podmienky CBETA</h2>
               <p>Pred používaním si prosím prečítaj podmienky.</p>
-              <a className="btn" href="/cbeta-tos">Zobraziť podmienky</a>
+              <a className="btn" href="/cbeta/tos">Zobraziť podmienky</a>
             </div>
           </div>
           <div className="card bg-base-100 shadow">

@@ -13,7 +13,7 @@ export default function CbetaLayout({ children }: { children: React.ReactNode })
             </Link>
             <nav className="ml-auto flex items-center gap-2">
               <Link to="/cbeta" className="btn btn-ghost btn-sm">Prehľad</Link>
-              <a href="/cbeta-tos" className="btn btn-ghost btn-sm">Podmienky</a>
+              <Link to="/cbeta/tos" className="btn btn-ghost btn-sm">Podmienky</Link>
             </nav>
           </div>
         </div>

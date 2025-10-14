@@ -10,6 +10,7 @@ import CbetaTos from "./routes/CbetaTos";
 import CbetaDashboard from "./cbeta/Dashboard";
 import CbetaLogin from "./cbeta/Login";
 import CbetaSignup from "./cbeta/Signup";
+import CbetaTosPage from "./cbeta/Tos";
 
 const router = createBrowserRouter([
   { path: "/", element: <Root /> },
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: "/cbeta", element: <CbetaDashboard /> },
   { path: "/cbeta/login", element: <CbetaLogin /> },
   { path: "/cbeta/signup", element: <CbetaSignup /> },
+  { path: "/cbeta/tos", element: <CbetaTosPage /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
