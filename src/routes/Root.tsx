@@ -4,34 +4,20 @@ import QRForAndroid from "../components/QRForAndroid";
 import Navbar from "../components/Navbar";
 
 export default function Root() {
-  const todayStr = (() => {
-    const d = new Date();
+  // Threshold: 15.10.2025 08:00 CEST (UTC+2). Compute as UTC for comparison.
+  // Create Date as if local is CEST, then convert to UTC timestamp offset of +2h.
+  const [serverNowMs, setServerNowMs] = React.useState<number | null>(null);
+  function formatSkDateFromMs(ms: number): string {
+    const d = new Date(ms);
     const dd = d.getDate();
     const mm = d.getMonth() + 1;
     const yyyy = d.getFullYear();
-    return `${dd}.${mm}.${yyyy}`;
-  })();
-
-  const betaStart = new Date(2025, 9, 15, 8, 0, 0); // 15.10.2025
-  // Threshold: 15.10.2025 08:00 CEST (UTC+2). Compute as UTC for comparison.
-  // Create Date as if local is CEST, then convert to UTC timestamp offset of +2h.
-  const ROADMAP_THRESHOLD_UTC_MS = Date.UTC(2025, 9, 15, 8, 0, 0); // 06:00 UTC == 08:00 CEST
-  const [serverNowMs, setServerNowMs] = React.useState<number | null>(null);
-  const isAfterThreshold = serverNowMs !== null && serverNowMs >= ROADMAP_THRESHOLD_UTC_MS;
-  function getRemaining() {
-    const now = new Date().getTime();
-    const diff = Math.max(0, betaStart.getTime() - now);
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    return { days, hours, minutes, seconds };
+    return `${dd}. ${mm}. ${yyyy}`;
   }
-  const [remaining, setRemaining] = React.useState(getRemaining());
-  React.useEffect(() => {
-    const id = setInterval(() => setRemaining(getRemaining()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const serverDateStr = React.useMemo(() => {
+    return serverNowMs != null ? formatSkDateFromMs(serverNowMs) : "—";
+  }, [serverNowMs]);
+  // No countdown anymore; we only display a static status text in the capacity card.
 
   // Fetch server time once to avoid client clock skew
   React.useEffect(() => {
@@ -155,27 +141,10 @@ export default function Root() {
                 <h2 className="card-title">Plán a kapacita</h2>
                 <div className="badge badge-primary">Kapacita: 10 miest</div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
-                <div className="text-center p-3 rounded-box bg-base-200">
-                  <div className="text-3xl font-bold tabular-nums">{remaining.days}</div>
-                  <div className="opacity-70 text-sm">dni</div>
-                </div>
-                <div className="text-center p-3 rounded-box bg-base-200">
-                  <div className="text-3xl font-bold tabular-nums">{remaining.hours.toString().padStart(2, '0')}</div>
-                  <div className="opacity-70 text-sm">hod</div>
-                </div>
-                <div className="text-center p-3 rounded-box bg-base-200">
-                  <div className="text-3xl font-bold tabular-nums">{remaining.minutes.toString().padStart(2, '0')}</div>
-                  <div className="opacity-70 text-sm">min</div>
-                </div>
-                <div className="text-center p-3 rounded-box bg-base-200">
-                  <div className="text-3xl font-bold tabular-nums">{remaining.seconds.toString().padStart(2, '0')}</div>
-                  <div className="opacity-70 text-sm">sek</div>
-                </div>
+              <div className="mt-4 p-6 rounded-box bg-base-200 text-center">
+                <div className="text-3xl md:text-4xl font-extrabold tracking-tight">Beta je spustená</div>
+                <div className="opacity-80 mt-2">Bude prebiehať do <strong>1.11.2025</strong>.</div>
               </div>
-              <p className="mt-3 opacity-80">
-                Spúšťame <strong>15.10.2025</strong>. Beta potrvá do <strong>1.11.2025</strong>.
-              </p>
             </div>
           </div>
         </section>
@@ -256,32 +225,28 @@ export default function Root() {
             <li>
               <hr />
               <div className="timeline-middle">
-                <div className="relative w-12 h-12 rounded-full ring-4 ring-blue-300 bg-blue-200/40 flex items-center justify-center">
-                  <div className="w-8 h-8 rotate-45 rounded-lg bg-blue-400"></div>
+                <div className="relative w-12 h-12 rounded-full ring-4 ring-blue-800 bg-blue-700/10 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-[40%] bg-blue-600"></div>
                 </div>
               </div>
               <div className="timeline-start md:text-end md:pr-6 mb-10">
-                <div className="font-mono opacity-70">{isAfterThreshold ? "15.10.2025 08:00" : "27.9.2025"}</div>
-                <div className="text-lg font-semibold">Teraz</div>
-                <p>
-                  {isAfterThreshold
-                    ? "Uzavreli sme prihlasovanie do uzavretej bety a pripravujeme jej distribúciu."
-                    : "Pripravujeme prvé kolo uzavretej beta verzie a pokračujeme vo vývoji."}
-                </p>
+                <div className="font-mono opacity-70">28.9.2025</div>
+                <div className="text-lg font-semibold">Príprava uzavretej bety</div>
+                <p>Príprava uzavretej bety a dokončenie kľúčových funkcií.</p>
               </div>
               <hr />
             </li>
             <li>
               <hr />
               <div className="timeline-middle">
-                <div className="relative w-12 h-12 rounded-full ring-4 ring-gray-300 bg-gray-50 flex items-center justify-center">
-                  <div className="w-9 h-9 rounded-full overflow-hidden" style={{backgroundImage: "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, #f3f4f6 4px, #f3f4f6 8px)"}}></div>
+                <div className="relative w-12 h-12 rounded-full ring-4 ring-blue-300 bg-blue-200/40 flex items-center justify-center">
+                  <div className="w-8 h-8 rotate-45 rounded-lg bg-blue-400"></div>
                 </div>
               </div>
               <div className="timeline-end md:ml-6 mb-10">
-                <div className="font-mono opacity-70">15.10.2025 – 1.11.2025</div>
-                <div className="text-lg font-semibold">Prvá beta (uzavretá)</div>
-                <p>Uzavretý beta program pre prihlásených používateľov. Zbierame a vyhodnocujeme spätnú väzbu.</p>
+                <div className="font-mono opacity-70">{serverDateStr}</div>
+                <div className="text-lg font-semibold">Teraz - Prvá beta (uzavretá)</div>
+                <p>Uzavretá beta je spustená – aktívne testujeme a zbierame spätnú väzbu.</p>
               </div>
               <hr />
             </li>
